@@ -12,8 +12,11 @@ public class ShootingSystem : MonoBehaviour
     [SerializeField] ParticleSystem inkParticle;
     [SerializeField] Transform parentController;
     [SerializeField] Transform splatGunNozzle;
+    [SerializeField] Transform splatGunNozzle2;
     [SerializeField] CinemachineFreeLook freeLookCamera;
     CinemachineImpulseSource impulseSource;
+
+    public AudioSource shootSound;
 
     void Start()
     {
@@ -34,9 +37,14 @@ public class ShootingSystem : MonoBehaviour
         }
 
         if (Input.GetMouseButtonDown(0))
+        {
             inkParticle.Play();
+            shootSound.Play();
+        }
         else if (Input.GetMouseButtonUp(0))
+        {
             inkParticle.Stop();
+        }
 
         parentController.localEulerAngles
             = new Vector3(Mathf.LerpAngle(parentController.localEulerAngles.x, pressing ? RemapCamera(freeLookCamera.m_YAxis.Value, 0, 1, -25, 25) : 0, .3f), angle.y, angle.z);
@@ -52,13 +60,16 @@ public class ShootingSystem : MonoBehaviour
             parentController.DOLocalMove(localPos - new Vector3(0, 0, .2f), .03f)
                 .OnComplete(() => parentController.DOLocalMove(localPos, .1f).SetEase(Ease.OutSine));
 
-           impulseSource.GenerateImpulse();
+            impulseSource.GenerateImpulse();
         }
 
         if (!DOTween.IsTweening(splatGunNozzle))
         {
             splatGunNozzle.DOComplete();
             splatGunNozzle.DOPunchScale(new Vector3(0, 1, 1) / 1.5f, .15f, 10, 1);
+
+            splatGunNozzle2.DOComplete();
+            splatGunNozzle2.DOPunchScale(new Vector3(0, 1, 1) / 1.5f, .15f, 10, 1);
         }
     }
 

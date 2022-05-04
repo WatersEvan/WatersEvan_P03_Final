@@ -25,6 +25,8 @@ public class MovementInput : MonoBehaviour {
 	public float Speed;
 	public float allowPlayerRotation = 0.1f;
 
+	//public Vector3 movementVector = Vector3.zero;
+
 
     [Header("Animation Smoothing")]
     [Range(0, 1f)]
@@ -37,7 +39,7 @@ public class MovementInput : MonoBehaviour {
     public float StopAnimTime = 0.15f;
 
     public float verticalVel;
-    private Vector3 moveVector;
+    public Vector3 moveVector;
 
 	void Start () {
 		anim = this.GetComponent<Animator> ();
