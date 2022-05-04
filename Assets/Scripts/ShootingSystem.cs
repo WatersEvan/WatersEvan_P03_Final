@@ -24,6 +24,8 @@ public class ShootingSystem : MonoBehaviour
 
     private bool isReloading;
 
+    public AudioSource reloadSound;
+
     public InkBar inkBar;
 
     void Start()
@@ -80,6 +82,7 @@ public class ShootingSystem : MonoBehaviour
 
         currentAmmo = maxAmmo;
         inkBar.SetInk(currentAmmo);
+        reloadSound.Play();
         isReloading = false;
     }
 
