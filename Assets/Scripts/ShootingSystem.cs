@@ -18,10 +18,17 @@ public class ShootingSystem : MonoBehaviour
 
     public AudioSource shootSound;
 
+    public int maxAmmo = 500;
+    private int currentAmmo;
+    public float reloadTime = 1f;
+
+    private bool isReloading;
+
     void Start()
     {
         input = GetComponent<MovementInput>();
         impulseSource = freeLookCamera.GetComponent<CinemachineImpulseSource>();
+        currentAmmo = maxAmmo;
     }
 
     void Update()
@@ -34,6 +41,18 @@ public class ShootingSystem : MonoBehaviour
         {
             VisualPolish();
             input.RotateToCamera(transform);
+        }
+
+        if (isReloading)
+        {
+            return;
+        }
+
+        if (currentAmmo <= 0)
+        {
+            StartCoroutine(Reload());
+            inkParticle.Stop();
+            return;
         }
 
         if (Input.GetMouseButtonDown(0))
@@ -50,8 +69,21 @@ public class ShootingSystem : MonoBehaviour
             = new Vector3(Mathf.LerpAngle(parentController.localEulerAngles.x, pressing ? RemapCamera(freeLookCamera.m_YAxis.Value, 0, 1, -25, 25) : 0, .3f), angle.y, angle.z);
     }
 
+    IEnumerator Reload()
+    {
+        isReloading = true;
+        Debug.Log("Reloading");
+
+        yield return new WaitForSeconds(reloadTime);
+
+        currentAmmo = maxAmmo;
+        isReloading = false;
+    }
+
     void VisualPolish()
     {
+        currentAmmo--;
+        
         if (!DOTween.IsTweening(parentController))
         {
             parentController.DOComplete();
