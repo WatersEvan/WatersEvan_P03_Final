@@ -24,6 +24,8 @@ public class ShootingSystem : MonoBehaviour
 
     private bool isReloading;
 
+    public InkBar inkBar;
+
     void Start()
     {
         input = GetComponent<MovementInput>();
@@ -77,13 +79,15 @@ public class ShootingSystem : MonoBehaviour
         yield return new WaitForSeconds(reloadTime);
 
         currentAmmo = maxAmmo;
+        inkBar.SetInk(currentAmmo);
         isReloading = false;
     }
 
     void VisualPolish()
     {
         currentAmmo--;
-        
+        inkBar.SetInk(currentAmmo);
+
         if (!DOTween.IsTweening(parentController))
         {
             parentController.DOComplete();

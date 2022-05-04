@@ -27,6 +27,12 @@ public class MovementInput : MonoBehaviour {
 
     public AudioSource dashSound;
 
+    public int maxDash = 2;
+    private int currentDash;
+    public float reloadTime = 2f;
+
+    private bool dashRl;
+
 
     [Header("Animation Smoothing")]
     [Range(0, 1f)]
@@ -45,9 +51,16 @@ public class MovementInput : MonoBehaviour {
         anim = this.GetComponent<Animator> ();
         cam = Camera.main;
         controller = this.GetComponent<CharacterController> ();
+        currentDash = maxDash;
     }
     
     void Update () {
+
+        if(Input.GetKeyDown(KeyCode.Escape))
+        {
+            Debug.Log("Exit the Game");
+            Application.Quit();
+        }
 
         InputMagnitude ();
 
@@ -60,13 +73,34 @@ public class MovementInput : MonoBehaviour {
         moveVector = new Vector3(0, verticalVel * .2f * Time.deltaTime, 0);
         controller.Move(moveVector);
 
-        
-        
+        if(dashRl)
+        {
+            return;
+        }
+
+        if (currentDash <= 0)
+        {
+            StartCoroutine(Reload());
+            return;
+        }
+
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
+            currentDash--;
             controller.Move(desiredMoveDirection * Time.deltaTime * 75f * Velocity);
             dashSound.Play();
         }
+    }
+
+    IEnumerator Reload()
+    {
+        dashRl = true;
+        Debug.Log("Reloading Dash");
+
+        yield return new WaitForSeconds(reloadTime);
+
+        currentDash = maxDash;
+        dashRl = false;
     }
 
     void PlayerMoveAndRotation() {
